@@ -1,0 +1,37 @@
+{%extends 'main.html'%}
+{%block content%}
+ {%for task in tasks%}
+
+    <div class="container " >
+        <form method="POST" action="{% url 'change_task' task.id %} ">
+
+  
+        {% csrf_token %}
+        <div class="card">
+            <div class="btn-group" role="group">
+                <input  type="checkbox" style=" transform: translate(10px);"  onchange=this.form.submit();  {% if task.is_completed %}checked{% endif %}>
+                <div class="card-body">
+
+                    {{task}}
+                   
+                </div>
+                <div class="toast-header" style="transform: translate(-950px,0px);">
+                    <small>{{task.due_date}}</small>
+                </div>
+            
+            </div>
+        </form>
+    </div>        
+    <div style="display:flex; justify-content:flex-end;">
+        <form method=" post" action="{% url 'delete_task' task.id %}" style="display: grid;  align-items: center;">
+            {% csrf_token %}
+            <button type=" submit" class="btn btn-danger" style="transform: translate(-2px,-50px);"  onclick="return confirm('Are you sure?')"><i
+                    class="fa-duotone fa-solid fa-delete-left"></i></button>
+        </form>
+    </div>
+    
+</div>
+
+{%endfor%}
+
+{%endblock%}

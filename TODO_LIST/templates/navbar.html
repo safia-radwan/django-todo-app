@@ -1,0 +1,26 @@
+{% load static %}
+
+<nav class="navbar navbar-expand-lg  bg-light">
+
+  <div class="d-flex flex-row bd-highlight mb-3"></div>
+
+  <a class="content-end" aria-current="page" href="{%url 'home' %}">
+
+    <img src="{% static 'images/todo.jpg' %}" width="60" height="60" alt="">
+
+  </a>
+
+  <ul class="nav justify-content-end">
+
+    <li class="nav-item">
+      <a class="nav-link" href="{%url 'home' %}">Tasks</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{%url 'completed' %}">Completed</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{%url 'logout' %}">Logout</a>
+    </li>
+  </ul>
+  </div>
+</nav>
