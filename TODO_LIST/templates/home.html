@@ -8,10 +8,34 @@
             <form method="POST" id='task_form'>
                 {% csrf_token %}
               
-                {{form}}
+               
                 <input type="hidden" name='task_id' id='task_id'>
-                <button type="submit" class="btn btn-success">Add</button>
+                
+                    <h2>Add New Task</h2>
 
+                <div class="mb-3" >
+                <label  class="form-label"> Task Name</label>
+                <input class="form-control" type="text" name='task' id='id_task'>
+                </div>
+                <div class="mb-3">
+                <label for="formFileMultiple" class="form-label">Due Date</label>
+                <input class="form-control" type="date" name='due_date' id='id_due_date' >
+                </div>
+                <div class="mb-3">
+                <label for="formFileMultiple" class="form-label" >Catigory</label>
+                <select class="select_form" id='catigory' name='catigory'><option value="Personal">Personal</option>
+                                                            <option value="Work">Work</option>
+                                                            <option value="Study">Study</option>
+                                                        </select>
+                </div>
+                <div class="mb-3">
+                <label for="formFileMultiple" class="form-label">Priority</label>
+                <select class="select_form" id='priority' name='priority'><option value="High">High</option>
+                                                            <option value="Medium">Medium</option>
+                                                            <option value="Low">Low</option>
+                                                        </select>
+                </div>
+                <button type="submit"  class="btn btn-success">Add</button>
             </form>
 
 
@@ -21,6 +45,22 @@
 
     </div>
 <br>   
+
+<div class="container p-4">
+        <form method='get'>
+            
+            
+            <input type="text" value='{{search_query}}' name="search" placeholder="Search task">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+    </div> 
+<br>
+
+<div class='container'>
+    <h2>My Tasks<h2>
+</div>
+<br>
+
     {%for task in tasks%}
 
     <div class="container " >
@@ -28,21 +68,47 @@
 
   
         {% csrf_token %}
-        <div class="card">
+        <div class="card" style=" hight:18rem; ">
             <div class="btn-group" role="group">
                 <input  type="checkbox" style=" transform: translate(10px);"  onchange=this.form.submit();  {% if task.is_completed %}checked{% endif %}>
                 <div class="card-body">
-
-                    {{task}}
-                   
+                    <h5 class="card-title"> {{task}}</h5> 
+                    
+                    
                 </div>
-                <div class="toast-header" style="transform: translate(-950px,0px);">
+                    
+
+                <div class="toast-header" style="transform: translate(-910px,-0px);">
                     <small>{{task.due_date}}</small>
                 </div>
-            
+                <div class="toast-header"  style="transform: translate(-850px,0px);">
+                        <span class="badge bg-info text-dark">
+                        <small> {{task.catigory}}</small>
+                        </span>
+                </div>
+                <div class="toast-header" style="transform: translate(-750px,0px);"" {% if task.priority is 'High' %}style='color:red';{% endif %}>
+                        <small> {% if task.priority == 'High' %}
+    <span class="badge bg-danger">
+        {{ task.get_priority_display }}
+    </span>
+
+        {% elif task.priority == 'Medium' %}
+            <span class="badge bg-warning text-dark">
+                {{ task.get_priority_display }}
+            </span>
+
+        {% elif task.priority == 'Low' %}
+            <span class="badge bg-success">
+                {{ task.get_priority_display }}
+            </span>
+        {% endif %}  </small>
+                </div>
             </div>
         </form>
     </div>      
+
+      
+
     <div style="display:flex; justify-content:flex-end;">
         <form method="post"  onclick="" style="display: grid;  align-items: center;">
             
@@ -52,6 +118,8 @@
         onclick="editTask(
         '{{task.id}}',
         '{{task.task|escapejs}}',
+        '{{task.priority|escapejs}}',
+        '{{task.catigory|escapejs}}',
         '{{task.due_date|date:'Y-m-d'}}'
          )">
         <i>edit</i>
@@ -74,11 +142,13 @@
 
 
 <script>
-function editTask(id, task, date) {
+function editTask(id, task,  priority, catigory, date) {
 
     document.getElementById('id_task').value = task;
 
     document.getElementById('id_due_date').value = date;
+    document.getElementById('priority').value = priority;
+    document.getElementById('catigory').value = catigory;
 
     document.getElementById('task_id').value = id;
 

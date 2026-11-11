@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 class date_Form(forms.ModelForm):
     class Meta:
         model = tasks
-        fields = ['task','due_date']
+        fields = ['task','due_date','priority','catigory']
         
         widgets = {
             'due_date': forms.DateInput(attrs={'type': 'date'})

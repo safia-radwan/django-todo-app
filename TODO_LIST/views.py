@@ -4,10 +4,10 @@ from django.http import HttpResponse
 from .forms import date_Form, register_from
 from .models import * 
 from django.contrib import messages
-
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate ,login as mylogin ,logout
-# Create your views here.
+from django.db.models import Q
+from datetime import date
 
 
 @login_required(login_url="login")
@@ -18,11 +18,16 @@ def home(request)  :
      
      if request.method =='POST':
           task_id=request.POST.get('task_id')
-          if task_id :
+          # edit task
+          if task_id :  
                task= tasks.objects.get(id=task_id)
                form=date_Form(request.POST,instance=task)
-               form.save()
-               form=date_Form()
+               if form.is_valid():
+                    form.save()
+                    form=date_Form()
+               else:
+                    form=date_Form()
+               # add a new task
           else :     
                form = date_Form(request.POST)
                
@@ -32,15 +37,28 @@ def home(request)  :
                     new_task.save()
                     return  redirect ('home')
                     
-                    
+                    # search task with name, date ,priority, catigory
      else:
           form=date_Form()
                
-         
-     return render(request,'home.html',{'form':form ,'tasks':task2})
+     # search_form=task_filter(request.GET,queryset=task2)
+     # print(search_form.form.fields)
+     # print(task2.values('task', 'due_date'))
+     search_query=request.GET.get('search','')
+     filtered_tasks=task2
+     if search_query:
+          filtered_tasks=task2.filter(Q(task__icontains=search_query)|Q(priority__icontains=search_query)|Q(catigory__icontains=search_query))
+          try:
+               
+               search_date=date.fromisoformat(search_query)
+               print(search_date)
+               filtered_tasks=task2.filter(Q(task__icontains=search_query)|Q(due_date=search_date)|Q(priority__icontains=search_query)|Q(catigory__icontains=search_query))
+          except: ValueError
+          pass
+     return render(request,'home.html',{'form':form ,'tasks':filtered_tasks,'search_query':search_query})
      
-     
-     
+    
+          
      
      
 def change_task(request,task_id):
